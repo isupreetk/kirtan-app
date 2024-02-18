@@ -1,6 +1,6 @@
 import "./GoogleForm.scss";
 
-function GoogleForm() {
+const GoogleForm = () => {
   return (
     <div className="google-form">
       <a
