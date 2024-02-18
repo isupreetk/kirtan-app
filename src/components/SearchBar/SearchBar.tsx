@@ -6,6 +6,7 @@ import { useRef } from 'react';
 const SearchBar = () => {
 
   let inputRef = useRef<HTMLInputElement>(null);
+  
   const handleSearch = () => {
     console.log("inputRef", inputRef.current?.value);
   }
