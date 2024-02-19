@@ -73,9 +73,10 @@ const HomePage : React.FC = () => {
         }
     }
 
-    kirtansData.slice(0,5).forEach(k=>{
-      console.log(new Kirtan(k.aid, k.audcatid, k.artstid, k.Title, k.Album, k.Sevadar, k.Titlefws, k.Duration, k.audiosize, k.audiopath, k.audio_year, k.filename, k.cdnpath, k.imgpath, k.status, k.createdon));
-    });   
+    // TODO - remove these - this was just for initial testing
+    // kirtansData.slice(0,5).forEach(k=>{
+    //   console.log(new Kirtan(k.aid, k.audcatid, k.artstid, k.Title, k.Album, k.Sevadar, k.Titlefws, k.Duration, k.audiosize, k.audiopath, k.audio_year, k.filename, k.cdnpath, k.imgpath, k.status, k.createdon));
+    // });   
 
   // let inputRef = useRef();
   let inputRef = useRef<HTMLInputElement | null>(null); 
@@ -128,6 +129,7 @@ const HomePage : React.FC = () => {
   const handleSearch = () => {
     // Ensure inputRef and its value exist before proceeding
     if (inputRef.current) {
+      console.log(inputRef.current);
       const searchString: string = inputRef.current.value || ""; // Provide a default empty string if value is undefined
       setSearchTerm(searchString);
       setCurrentPage(1);
@@ -148,9 +150,9 @@ const HomePage : React.FC = () => {
         <Row className="p-4">
           <SearchBar
             ref={inputRef}
-            // handleSearch={handleSearch}
-            // resetSearch={resetSearch}
-            // urlSearchString={urlSearchString}
+            handleSearch={handleSearch}
+            resetSearch={resetSearch}
+            urlSearchString={urlSearchString}
           />
         </Row>
         <Filters
