@@ -17,7 +17,7 @@ import "./HomePage.scss";
 const HomePage : React.FC = () => {
 
     let kirtanData : Kirtans[] = kirtansData;
-    console.log("kirtanData", kirtanData);
+    // console.log("kirtanData", kirtanData);
 
     class Kirtan {
       aid : number;

@@ -1,4 +1,3 @@
-import React from 'react';
 import "./SearchBar.scss";
 import CloseButton from "../../assets/images/close-line-icon.png";
 import {forwardRef } from "react";
@@ -9,7 +8,8 @@ type SearchBarProps = {
   urlSearchString: string | null;
 };
 
-const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(({ handleSearch, resetSearch, urlSearchString }, ref) => {
+const SearchBar = 
+  forwardRef<HTMLInputElement, SearchBarProps>( ({ handleSearch, resetSearch, urlSearchString }, ref) => {
 
     return (
         <div className="searchbar">
