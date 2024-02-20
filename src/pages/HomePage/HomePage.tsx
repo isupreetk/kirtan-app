@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Container, Row } from "react-bootstrap";
-// import toPascalCase from "../../utils.js";
+import toPascalCase from "../../utils";
 import kirtansData from "../../assets/data/kirtanDataSet.json";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Filters from "../../components/Filters/Filters";
@@ -24,8 +24,11 @@ const HomePage : React.FC = () => {
       audcatid: number;
       artstid: number;
       Title: string;
+      hTitle: string;
       Album: string;
+      hAlbum: string;
       Sevadar: string;
+      hSevadar: string;
       Titlefws: string;
       Duration: number;
       audiosize: number;
@@ -36,13 +39,17 @@ const HomePage : React.FC = () => {
       imgpath: string;
       status: number;
       createdon: string;
+      Score: number;
 
          constructor ( aid: number,
           audcatid: number,
           artstid: number,
           Title: string,
+          hTitle: string,
           Album: string,
+          hAlbum: string,
           Sevadar: string,
+          hSevadar: string,
           Titlefws: string,
           Duration: number,
           audiosize: number,
@@ -52,14 +59,18 @@ const HomePage : React.FC = () => {
           cdnpath: string,
           imgpath: string,
           status: number,
-          createdon: string ) 
+          createdon: string, 
+          Score: number ) 
           {
           this.aid = aid;
           this.audcatid = audcatid;
           this.artstid = artstid;
           this.Title = Title;
+          this.hTitle = hTitle;
           this.Album = Album;
+          this.hAlbum = hAlbum;
           this.Sevadar = Sevadar;
+          this.hSevadar = hSevadar;
           this.Titlefws = Titlefws;
           this.Duration = Duration;
           this.audiosize = audiosize;
@@ -70,6 +81,7 @@ const HomePage : React.FC = () => {
           this.imgpath = imgpath;
           this.status = status;
           this.createdon = createdon;
+          this.Score = Score;
         }
     }
 
@@ -139,6 +151,96 @@ const HomePage : React.FC = () => {
   
       // Uncomment the line below if you want to add to search history
       // searchHistory.push(searchString);
+    }
+  };
+
+  // TODO - once pagination component is introduced
+  // Get Page
+  // const paginate = (event, pageNumber) => {
+  //   event.preventDefault();
+  //   setCurrentPage(pageNumber);
+  // };
+
+  // TODO - once KirtanList component is introduced
+  // const togglePlay = (selectedKirtan) => {
+  //   let playImageEl = document.getElementById(`play${selectedKirtan.aid}`);
+  //   let pauseImageEl = document.getElementById(`pause${selectedKirtan.aid}`);
+  //   if (playImageEl.classList.value.includes("button__hidden")) {
+  //     playImageEl.classList.remove("button__hidden");
+  //     pauseImageEl.classList.add("button__hidden");
+  //   } else if (pauseImageEl.classList.value.includes("button__hidden")) {
+  //     pauseImageEl.classList.remove("button__hidden");
+  //     playImageEl.classList.add("button__hidden");
+  //   }
+  // };
+
+  const getPossibleCombinations = (searchTerm : string) : string[][] => {
+    let searchArray : string[] = searchTerm.split(" ");
+    searchArray = searchArray.filter((s) => s !== "");
+    return searchArray.reduce(
+        (subsets : string[][], value : string) =>
+          subsets.concat(subsets.map((set : string[]) => [value, ...set])),
+        [[]]
+      )
+      .sort((a : string[] ,b : string[]) => {
+        return b.length - a.length;
+      });
+  };
+
+  const calculateKirtanScore = (kirtan : Kirtan, possibleCombinations : string[][]) => {
+    kirtan.Score = 0;
+
+    for (let i = 0; i <= possibleCombinations?.length - 1; i++) {
+      let array : string[] = possibleCombinations[i];
+      let arrayLength : number = array.length;
+      let searchExists : boolean = true;
+      if (arrayLength === 0) continue;
+      array.forEach((element) => {
+        if (
+          !(
+            kirtan.Title.toString()
+              .toLowerCase()
+              .includes(element.toLowerCase()) ||
+            kirtan.Sevadar.toLowerCase().includes(element.toLowerCase()) ||
+            kirtan.Album.toLowerCase().includes(element.toLowerCase()) ||
+            kirtan.audio_year?.toString().includes(element) ||
+            kirtan.Titlefws.toString()
+              .toLowerCase()
+              .includes(element.toLowerCase())
+          )
+        ) {
+          searchExists = false;
+        }
+      });
+
+      kirtan.hTitle = kirtan.Title;
+      kirtan.hSevadar = kirtan.Sevadar;
+      kirtan.hAlbum = kirtan.Album;
+
+      if (searchExists) {
+        kirtan.Score = arrayLength;
+        array.forEach((word) => {
+          kirtan.hTitle = kirtan.hTitle
+            .toString()
+            ?.toLowerCase()
+            .replace(word?.toLowerCase(), `<strong>${word}</strong>`);
+          kirtan.hSevadar = kirtan.hSevadar
+            ?.toLowerCase()
+            .replace(word?.toLowerCase(), `<strong>${word}</strong>`);
+          kirtan.hAlbum = kirtan.hAlbum
+            ?.toLowerCase()
+            .replace(word?.toLowerCase(), `<strong>${word}</strong>`);
+        });
+        kirtan.hTitle = toPascalCase(kirtan.hTitle);
+        kirtan.hSevadar = toPascalCase(kirtan.hSevadar);
+        kirtan.hAlbum = toPascalCase(kirtan.hAlbum);
+        break;
+      }
+    }
+    if (kirtan.Score > 0) {
+      return kirtan;
+    } else {
+      return false;
     }
   };
 

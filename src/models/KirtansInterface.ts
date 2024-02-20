@@ -3,8 +3,11 @@ export interface Kirtans {
     "audcatid": number,
     "artstid": number,
     "Title": string,
+    "hTitle": string,
     "Album": string,
+    "hAlbum": string,
     "Sevadar": string,
+    "hSevadar": string,
     "Titlefws": string,
     "Duration": number,
     "audiosize": number,
@@ -14,5 +17,6 @@ export interface Kirtans {
     "cdnpath": string,
     "imgpath": string,
     "status": number,
-    "createdon": string
+    "createdon": string,
+    "Score": number
 }
