@@ -1,40 +1,37 @@
+import { Kirtans } from "../../models/KirtansInterface";
 import "./AudioPlayer.scss";
 
-const AudioPlayer = () => {
+interface AudioPlayerProps {
+   selectedKirtan: Kirtans | never[];
+   play: boolean;
+   setPlay : (play : boolean) => void
+}
 
-    // { selectedKirtan, play, setPlay }
+const AudioPlayer : React.FC<AudioPlayerProps> = ({ selectedKirtan, play, setPlay }) => {
   
+  let selectedKirtanData = selectedKirtan as Kirtans;
+
   const handleAudioPlay = () => {
-    // setPlay(true);
+    setPlay(true);
   };
 
   const handleAudioPause = () => {
-    // setPlay(false);
+    setPlay(false);
  };
 
   return (
     <div className="audioplayer">
       <figure className="figure">
-
-        {/* <figcaption>Listening to: {selectedKirtan.Title}</figcaption>
+        <figcaption>Listening to: {selectedKirtanData.Title}</figcaption>
         <audio
           id="audio"
           controls
           autoPlay
-          src={selectedKirtan.cdnpath}
+          src={selectedKirtanData.cdnpath}
           onPlay={handleAudioPlay}
           onPause={handleAudioPause}
         >
-          <a href={selectedKirtan.cdnpath}> Download audio </a>
-        </audio> */}
-        <figcaption>Listening to: </figcaption>
-        <audio
-          id="audio"
-          controls
-          autoPlay
-          src=""
-        >
-          <a href=""> Download audio </a>
+          <a href={selectedKirtanData.cdnpath}> Download audio </a>
         </audio>
       </figure>
     </div>
