@@ -1,0 +1,22 @@
+export interface Kirtans {
+    "aid": number,
+    "audcatid": number,
+    "artstid": number,
+    "Title": string,
+    "hTitle": string,
+    "Album": string,
+    "hAlbum": string,
+    "Sevadar": string,
+    "hSevadar": string,
+    "Titlefws": string,
+    "Duration": number,
+    "audiosize": number,
+    "audiopath": string,
+    "audio_year": number,
+    "filename": string,
+    "cdnpath": string,
+    "imgpath": string,
+    "status": number,
+    "createdon": string,
+    "Score": number
+}

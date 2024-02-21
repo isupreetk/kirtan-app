@@ -1,0 +1,98 @@
+@use "../../styles/partials/variables" as *;
+@use "../../styles/partials/mixins" as *;
+
+.kirtan-list {
+    &__container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
+.kirtan-list-item {
+    display: flex;
+    border-bottom: 2px solid #17a8b5;
+    margin: 0.5rem;
+    width: 100%;
+
+    &__wrapper {
+        display: flex;
+        width: 100%;
+    }
+
+    &__container1 {
+        width: 20%;
+        display: none;
+
+        @include tablet {
+            width: 15%;
+        }
+
+        @include desktop {
+            width: 10%;
+        }
+    }
+
+    &__avatar {
+        border-radius: 50%;
+        background-color: #17a8b5;
+        height: 50px;
+        width: 50px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+
+        @include tablet {
+            margin: 0;
+            margin-left: 1rem;
+        }
+    }
+
+    &__container2 {
+        // width: 79%;
+        width: 89%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+
+        @include tablet {
+            // width: 75%;
+            width: 85%;
+        }
+
+        @include desktop {
+            // width: 80%;
+            width: 90%;
+        }
+    }
+
+    &__title {
+        text-align: left;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__details {
+        text-align: left;
+    }
+
+    &__container3 {
+        width: 20%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-evenly;
+    }
+}
+
+.button {
+    height: 25px;
+    width: 25px;
+
+    &__pause {
+        height: 30px;
+        width: 30px;
+    }
+}
