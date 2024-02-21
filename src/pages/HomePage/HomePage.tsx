@@ -94,30 +94,30 @@ const HomePage : React.FC = () => {
   let inputRef = useRef<HTMLInputElement | null>(null); 
   let navigate = useNavigate();
 
-  let [searchParams] = useSearchParams();
-  let urlAlbum = searchParams.get("urlAlbum");
-  let urlArtist = searchParams.get("urlArtist");
-  let urlSearchString = searchParams.get("urlSearchString");
+  let [searchParams, setSearchParams] : [URLSearchParams, Function] = useSearchParams();
+  let urlAlbum : string | null = searchParams.get("urlAlbum");
+  let urlArtist : string | null = searchParams.get("urlArtist");
+  let urlSearchString : string | null = searchParams.get("urlSearchString");
 
   let [searchTerm, setSearchTerm] = useState(
     urlSearchString ? urlSearchString : ""
   );
-  let [kirtans] = useState(kirtansData);
-  let [displayKirtans, setDisplayKirtans] = useState([]);
-  let [totalKirtans, setTotalKirtans] = useState(kirtansData.length);
-  let [allAlbums, setAllAlbums] = useState([]);
-  let [allArtists, setAllArtists] = useState([]);
-  let [albumFilter, setAlbumFilter] = useState(urlAlbum ? urlAlbum : []);
-  let [artistFilter, setArtistFilter] = useState(urlArtist ? urlArtist : []);
-  let [currentPage, setCurrentPage] = useState(1);
-  let [currentKirtans, setCurrentKirtans] = useState([]);
+  let [kirtans] = useState<Kirtans[]>(kirtansData);
+  let [displayKirtans, setDisplayKirtans] = useState<Kirtans[]>([]);
+  let [totalKirtans, setTotalKirtans] = useState<number>(kirtansData.length);
+  let [allAlbums, setAllAlbums] = useState<{ label: string; value: string; }[]>([]);
+  let [allArtists, setAllArtists] = useState<{ label: string; value: string; }[]>([]);
+  let [albumFilter, setAlbumFilter] = useState<string[]>(urlAlbum ? urlAlbum.split(",") : []);
+  let [artistFilter, setArtistFilter] = useState<string[]>(urlArtist ? urlArtist.split(",") : []);
+  let [currentPage, setCurrentPage] = useState<number>(1);
+  let [currentKirtans, setCurrentKirtans] = useState<Kirtans[]>([]);
   let [selectedKirtan, setSelectedKirtan] = useState([]);
-  let [play, setPlay] = useState(false);
-  let [isLoading] = useState(false);
+  let [play, setPlay] = useState<boolean>(false);
+  let [isLoading] = useState<boolean>(false);
   let [error] = useState(null);
   let entriesPerPage : number = 100;
     
-  const resetSearch = () => {
+  const resetSearch = () : void => {
     if (inputRef.current) {
       inputRef.current.value = "";
       setSearchTerm(inputRef.current.value);
@@ -138,7 +138,7 @@ const HomePage : React.FC = () => {
   //   // searchHistory.push(inputRef.current?.value);
   // };
 
-  const handleSearch = () => {
+  const handleSearch = () : void => {
     // Ensure inputRef and its value exist before proceeding
     if (inputRef.current) {
       console.log(inputRef.current);
@@ -187,7 +187,7 @@ const HomePage : React.FC = () => {
       });
   };
 
-  const calculateKirtanScore = (kirtan : Kirtan, possibleCombinations : string[][]) => {
+  const calculateKirtanScore = (kirtan : Kirtans, possibleCombinations : string[][]) => {
     kirtan.Score = 0;
 
     for (let i = 0; i <= possibleCombinations?.length - 1; i++) {
@@ -244,6 +244,143 @@ const HomePage : React.FC = () => {
     }
   };
 
+  const getSearchedKirtans = (kirtans: Kirtans[], possibleCombinations: string[][]) : Kirtans[] => {
+    return kirtans.filter((kirtan : Kirtans) => {
+      return calculateKirtanScore(kirtan, possibleCombinations);
+    });
+  };
+
+  const getSortedSearchedKirtans = (searchedKirtans: Kirtans[]) : Kirtans[] => {
+    let sortedData : Kirtans[] = searchedKirtans.sort((a: Kirtans, b: Kirtans) => {
+      return b.Score - a.Score;
+    });
+    if (sortedData.length > 0) {
+      return sortedData;
+    } else {
+      return kirtans;
+    }
+  };
+
+  // TODO - once filter component is started
+  const handleAlbumFilter = (event : readonly { label: string; value: string; }[] ) : void => {
+    // console.log(event);
+    /* to accomodate multi select filter */
+    albumFilter = [];
+    if (event.length > 0) {
+      event.forEach((e : { label: string; value: string; }) => {
+        albumFilter.push(e.value);
+        setAlbumFilter(albumFilter);
+        if (inputRef.current) {
+        navigate(
+          `/?urlSearchString=${inputRef.current?.value}&urlAlbum=${albumFilter}&urlArtist=${artistFilter}`
+        ); // to populate applied filters in url (make shareable url)
+        }
+      });
+    } else {
+      setAlbumFilter(albumFilter);
+      if (inputRef.current) {
+      navigate(
+        `/?urlSearchString=${inputRef.current?.value}&urlAlbum=${albumFilter}&urlArtist=${artistFilter}`
+      ); // to populate applied filters in url (make shareable url)
+      }
+    }
+  };
+
+  const getAlbumFilteredKirtans = (sortedSearchedKirtans: Kirtans[], albumFilter: string[]) : Kirtans[] => {
+    if (albumFilter.length === 0) {
+      return sortedSearchedKirtans;
+    } else {
+      return sortedSearchedKirtans.filter((item) => {
+        return albumFilter.includes(item.Album);
+      });
+    }
+  };
+
+  const handleArtistFilter = (event : readonly { label: string; value: string; }[]) => {
+    /* to accomodate multi select filter */
+    artistFilter : [] = [];
+    if (event.length > 0) {
+      event.forEach((e : { label: string; value: string; }) => {
+        artistFilter.push(e.value);
+        setArtistFilter(artistFilter);
+        if (inputRef.current) {
+        navigate(
+          `/?urlSearchString=${inputRef.current?.value}&urlAlbum=${albumFilter}&urlArtist=${artistFilter}`
+        ); // to populate applied filters in url (make shareable url)
+        }
+      });
+    } else {
+      setArtistFilter(artistFilter);
+      if (inputRef.current) {
+      navigate(
+        `/?urlSearchString=${inputRef.current?.value}&urlAlbum=${albumFilter}&urlArtist=${artistFilter}`
+      ); // to populate applied filters in url (make shareable url)
+      }
+    }
+  };
+
+  const getArtistFilteredKirtans = (albumFilteredKirtans : Kirtans[], artistFilter : string[]) : Kirtans[] => {
+    if (artistFilter.length === 0) {
+      return albumFilteredKirtans;
+    } else {
+      return albumFilteredKirtans.filter((item) => {
+        return artistFilter.includes(item.Sevadar);
+      });
+    }
+  };
+
+  const getResultKirtans = (kirtans : Kirtans[], searchTerm : string, albumFilter : string[], artistFilter : string[]) : Kirtans[] => {
+    let possibleCombinations : string[][] = getPossibleCombinations(searchTerm);
+    let searchedKirtans : Kirtans[] = getSearchedKirtans(kirtans, possibleCombinations);
+    let sortedSearchedKirtans : Kirtans[]  = getSortedSearchedKirtans(searchedKirtans);
+    let albumFilteredKirtans : Kirtans[] = getAlbumFilteredKirtans(
+      sortedSearchedKirtans,
+      albumFilter
+    );
+    let artistFilteredKirtans : Kirtans[] = getArtistFilteredKirtans(
+      albumFilteredKirtans,
+      artistFilter
+    );
+    return artistFilteredKirtans;
+  }
+
+  // TODO - google error
+  useEffect(() => {
+    setDisplayKirtans(
+      getResultKirtans(kirtans, searchTerm, albumFilter, artistFilter)
+    );
+    // eslint-disable-next-line
+  }, [searchTerm, albumFilter, artistFilter]);
+
+  // TODO
+  // useEffect(
+  //   () => {
+  //     // Get Current Kirtans
+  //     let indexOfLastKirtan = currentPage * entriesPerPage;
+  //     let indexOfFirstKirtan = indexOfLastKirtan - entriesPerPage;
+  //     setCurrentKirtans(
+  //       displayKirtans.slice(indexOfFirstKirtan, indexOfLastKirtan)
+  //     );
+  //     setTotalKirtans(displayKirtans.length);
+  //   },
+  //   // eslint-disable-next-line
+  //   [displayKirtans, currentPage]
+  // );
+
+  // useEffect(() => {
+  //   kirtans.forEach((kirtan) => {
+  //     if (allAlbums.includes(kirtan.Album)) {
+  //     } else if (allArtists.includes(kirtan.Sevadar)) {
+  //     } else {
+  //       allAlbums.push(kirtan.Album);
+  //       allArtists.push(kirtan.Sevadar);
+  //     }
+  //   });
+  //   setAllAlbums(allAlbums);
+  //   setAllArtists(allArtists);
+  //   // eslint-disable-next-line
+  // }, [kirtans]);
+
 
   return (
     <>
@@ -258,12 +395,12 @@ const HomePage : React.FC = () => {
           />
         </Row>
         <Filters
-          // allAlbums={allAlbums}
-          // handleAlbumFilter={handleAlbumFilter}
-          // allArtists={allArtists}
-          // handleArtistFilter={handleArtistFilter}
-          // urlAlbum={urlAlbum}
-          // urlArtist={urlArtist}
+          allAlbums={allAlbums}
+          handleAlbumFilter={handleAlbumFilter}
+          allArtists={allArtists}
+          handleArtistFilter={handleArtistFilter}
+          urlAlbum={urlAlbum}
+          urlArtist={urlArtist}
         />
         <Row>
           {/* <KirtanList
