@@ -8,7 +8,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import Filters from "../../components/Filters/Filters";
 import KirtanList from "../../components/KirtanList/KirtanList";
 import AudioPlayer from "../../components/AudioPlayer/AudioPlayer";
-// import PaginationComponent from "../../components/Pagination/Pagination";
+import PaginationComponent from "../../components/Pagination/Pagination";
 import GoogleForm from "../../components/GoogleForm/GoogleForm";
 import {Kirtans} from "../../models/KirtansInterface";
 
@@ -154,12 +154,11 @@ const HomePage : React.FC = () => {
     }
   };
 
-  // TODO - once pagination component is introduced
   // Get Page
-  // const paginate = (event, pageNumber) => {
-  //   event.preventDefault();
-  //   setCurrentPage(pageNumber);
-  // };
+  const paginate = (event : any, pageNumber : number) : void => {
+    event.preventDefault();
+    setCurrentPage(pageNumber);
+  };
 
   const togglePlay = (selectedKirtan : Kirtans) : void  => {
     let playImageEl : HTMLElement | null = document.getElementById(`play${selectedKirtan.aid}`);
@@ -428,13 +427,13 @@ const HomePage : React.FC = () => {
         />
       </Container>
     </Container>
-    {/* <PaginationComponent
+    <PaginationComponent
       entriesPerPage={entriesPerPage}
       totalKirtans={totalKirtans}
       paginate={paginate}
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
-    /> */}
+    />
     <Container fluid>
       <Container>
         <Row>
