@@ -31,7 +31,6 @@ const Filters : React.FC<FiltersProps> = ({ allAlbums, handleAlbumFilter, allArt
                   })
                 : []
             }
-            // defaultValue=""
             isMulti
             options={allAlbums}
             onChange={(event) => handleAlbumFilter(event)}
@@ -49,7 +48,6 @@ const Filters : React.FC<FiltersProps> = ({ allAlbums, handleAlbumFilter, allArt
                   })
                 : []
             }
-            // defaultValue=""
             isMulti
             options={allArtists}
             onChange={(event) => handleArtistFilter(event)}
