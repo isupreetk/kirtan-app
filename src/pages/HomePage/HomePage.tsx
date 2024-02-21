@@ -422,9 +422,9 @@ const HomePage : React.FC = () => {
           />
         </Row>
         <AudioPlayer
-          // selectedKirtan={selectedKirtan}
-          // play={play}
-          // setPlay={setPlay}
+          selectedKirtan={selectedKirtan}
+          play={play}
+          setPlay={setPlay}
         />
       </Container>
     </Container>
