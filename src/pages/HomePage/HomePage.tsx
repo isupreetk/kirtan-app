@@ -6,7 +6,7 @@ import toPascalCase from "../../utils";
 import kirtansData from "../../assets/data/kirtanDataSet.json";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Filters from "../../components/Filters/Filters";
-// import KirtanList from "../../components/KirtanList/KirtanList";
+import KirtanList from "../../components/KirtanList/KirtanList";
 import AudioPlayer from "../../components/AudioPlayer/AudioPlayer";
 // import PaginationComponent from "../../components/Pagination/Pagination";
 import GoogleForm from "../../components/GoogleForm/GoogleForm";
@@ -111,7 +111,7 @@ const HomePage : React.FC = () => {
   let [artistFilter, setArtistFilter] = useState<string[]>(urlArtist ? urlArtist.split(",") : []);
   let [currentPage, setCurrentPage] = useState<number>(1);
   let [currentKirtans, setCurrentKirtans] = useState<Kirtans[]>([]);
-  let [selectedKirtan, setSelectedKirtan] = useState([]);
+  let [selectedKirtan, setSelectedKirtan] = useState<Kirtans | never[]>([]);
   let [play, setPlay] = useState<boolean>(false);
   let [isLoading] = useState<boolean>(false);
   let [error] = useState(null);
@@ -161,18 +161,17 @@ const HomePage : React.FC = () => {
   //   setCurrentPage(pageNumber);
   // };
 
-  // TODO - once KirtanList component is introduced
-  // const togglePlay = (selectedKirtan) => {
-  //   let playImageEl = document.getElementById(`play${selectedKirtan.aid}`);
-  //   let pauseImageEl = document.getElementById(`pause${selectedKirtan.aid}`);
-  //   if (playImageEl.classList.value.includes("button__hidden")) {
-  //     playImageEl.classList.remove("button__hidden");
-  //     pauseImageEl.classList.add("button__hidden");
-  //   } else if (pauseImageEl.classList.value.includes("button__hidden")) {
-  //     pauseImageEl.classList.remove("button__hidden");
-  //     playImageEl.classList.add("button__hidden");
-  //   }
-  // };
+  const togglePlay = (selectedKirtan : Kirtans) : void  => {
+    let playImageEl : HTMLElement | null = document.getElementById(`play${selectedKirtan.aid}`);
+    let pauseImageEl : HTMLElement | null = document.getElementById(`pause${selectedKirtan.aid}`);
+    if (playImageEl?.classList.value.includes("button__hidden")) {
+      playImageEl?.classList.remove("button__hidden");
+      pauseImageEl?.classList.add("button__hidden");
+    } else if (pauseImageEl?.classList.value.includes("button__hidden")) {
+      pauseImageEl?.classList.remove("button__hidden");
+      playImageEl?.classList.add("button__hidden");
+    }
+  };
 
   const getPossibleCombinations = (searchTerm : string) : string[][] => {
     let searchArray : string[] = searchTerm.split(" ");
@@ -344,7 +343,6 @@ const HomePage : React.FC = () => {
     return artistFilteredKirtans;
   }
 
-  // TODO - google error
   useEffect(() => {
     setDisplayKirtans(
       getResultKirtans(kirtans, searchTerm, albumFilter, artistFilter)
@@ -352,35 +350,35 @@ const HomePage : React.FC = () => {
     // eslint-disable-next-line
   }, [searchTerm, albumFilter, artistFilter]);
 
-  // TODO
-  // useEffect(
-  //   () => {
-  //     // Get Current Kirtans
-  //     let indexOfLastKirtan = currentPage * entriesPerPage;
-  //     let indexOfFirstKirtan = indexOfLastKirtan - entriesPerPage;
-  //     setCurrentKirtans(
-  //       displayKirtans.slice(indexOfFirstKirtan, indexOfLastKirtan)
-  //     );
-  //     setTotalKirtans(displayKirtans.length);
-  //   },
-  //   // eslint-disable-next-line
-  //   [displayKirtans, currentPage]
-  // );
+  useEffect(
+    () => {
+      // Get Current Kirtans
+      let indexOfLastKirtan : number = currentPage * entriesPerPage;
+      let indexOfFirstKirtan : number = indexOfLastKirtan - entriesPerPage;
+      setCurrentKirtans(
+        displayKirtans.slice(indexOfFirstKirtan, indexOfLastKirtan)
+      );
+      setTotalKirtans(displayKirtans.length);
+    },
+    // eslint-disable-next-line
+    [displayKirtans, currentPage]
+  );
 
-  // useEffect(() => {
-  //   kirtans.forEach((kirtan) => {
-  //     if (allAlbums.includes(kirtan.Album)) {
-  //     } else if (allArtists.includes(kirtan.Sevadar)) {
-  //     } else {
-  //       allAlbums.push(kirtan.Album);
-  //       allArtists.push(kirtan.Sevadar);
-  //     }
-  //   });
-  //   setAllAlbums(allAlbums);
-  //   setAllArtists(allArtists);
-  //   // eslint-disable-next-line
-  // }, [kirtans]);
-
+  useEffect(() => {
+    kirtans.forEach((kirtan) => {
+      // if (allAlbums.includes(kirtan.Album)) {
+        if (allAlbums.some(album => album.label === kirtan.Album)) {
+      // } else if (allArtists.includes(kirtan.Sevadar)) {
+      } else if (allArtists.some(artist => artist.label === kirtan.Sevadar)) {
+      } else {
+        allAlbums.push({ label: kirtan.Album, value: kirtan.Album });
+        allArtists.push({ label: kirtan.Sevadar, value: kirtan.Sevadar });
+      }
+    });
+    setAllAlbums(allAlbums);
+    setAllArtists(allArtists);
+    // eslint-disable-next-line
+  }, [kirtans]);
 
   return (
     <>
@@ -403,7 +401,7 @@ const HomePage : React.FC = () => {
           urlArtist={urlArtist}
         />
         <Row>
-          {/* <KirtanList
+          <KirtanList
             searchTerm={searchTerm}
             displayKirtans={currentKirtans}
             isLoading={isLoading}
@@ -421,7 +419,7 @@ const HomePage : React.FC = () => {
             play={play}
             setPlay={setPlay}
             togglePlay={togglePlay}
-          /> */}
+          />
         </Row>
         <AudioPlayer
           // selectedKirtan={selectedKirtan}
